@@ -11,6 +11,7 @@ While studying cascading failures, one interesting dimension we've explored brie
 
 Sometimes this is pretty straightforward and as (possibly) expected: the first failure happens relatively quickly (a component is healthy and then it isn't) and then the second failure happens more or less immediately after the first. But in other cases, the temporal relationship was a bit more notable and so we looked at this a little more closely, and came up with four simple patterns.
 
+<img width="95%" src="/assets/temporal-patterns.png" />
 
 1. **Down and up.** The first component fails in some way and then recovers, and interestingly the failure in the second component happens as the first component *recovers* rather than when it first failed. One of the most common reasons for this is that when the component is down, a large backlog of work can be accumulated (maybe unsent message being stored in a queue) and while that component is recovering, the backlog is processed and cause some overload. We also saw this happen when the recovery path contains a defect, when failover (like, a database failing over to a new primary) is mishandled, and when are start doesn't go as planned. 
 
