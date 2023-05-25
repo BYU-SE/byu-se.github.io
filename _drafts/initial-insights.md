@@ -30,10 +30,18 @@ For what we suppose are similar reasons, [at Cloudflare a failure](https://blog.
 
 *(Question: in what sense is each one better and is better the right term?)*
 
-### Pattern: Multi-stage defense
+### Concept: "Similar" failures or "repeat" incidents
 
-TODO
+There is a sense that, when proposing actions, incident report authors are attempting to prevent, ["significantly reduce the likelihood of similar events in the future"](https://stripe.com/rcas/2019-07-10), or simply be notified about ["similar errors in the future"](https://www.traviscistatus.com/incidents/sxrh0l46czqn). This got us thinking about the possible meanings of the word similar (or repeat or reoccur or ...), as understood through the proposed actions. So far we have seen actions that seem to be considering the possibility of:
+
+1. Future failures with the same root-cause, trigger, or requiring the same conditions.
+2. Future failures with the same symptoms (and therefore similar impacts on the rest of the system), even if the cause is quite different.
+3. Current and future queries, regular expressions, code, etc with similar (performance, say) issues. (Ie., the same problem, and therefore risk, in other places.)
+4. Future incidents with similar characteristics and response requirements (again, even if the cause is quite different).
+
+One of our interviewees expressed scepticism that incidents ever repeat, and some of the incidents reports suggest that a number of (rare) events needed to coincide for the incident to happen. Nevertheless incident reports report on actions that are thinking about future possibilities. I mean, if it is never going to repeat, why bother? One explanation for this is that even if the exact incident may never occur, future incidents may be similar in some ways. I like to think about it this way: *in this incident we learned something about how our sociotechnical system behaves under a particular scenario, which is input to the ongoing evolution of our system.* While some proposed actions may aim to prevent a precise repeat incident, others may aim to improve the resilience (etc) of the system more generally, with a whole class of similar scenarios (etc) in mind.
 
 ### Lightning round
 
 * Some proposed actions, simply affect the prioritization and urgency of work that was already in progress. And it appears to be rare for a major project to come (only) from an incident analysis.
+* Understanding deeply all of the conditions needed for the incident to occur (in the way that it did) helps asses the risk of a reoccurrence, and presents ["many opportunities to protect the service against any similar event reoccurring"](https://aws.amazon.com/message/65648/).
