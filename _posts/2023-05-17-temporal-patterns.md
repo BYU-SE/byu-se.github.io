@@ -1,11 +1,11 @@
 ---
 layout: default
-title: "Temporal Patterns"
+title: "Temporal patterns in cascading failures"
 ---
 
 *Here in the BYU SE lab, we've been analyzing the way that failures cascade between system components. From [40 publicly published incident reports](https://byu-se.github.io/idb/), we have identified over **100 failure pairs**, which are simply two failures in different components, where the first failure is described as being the cause of the second failure. In a series of posts we'll be sharing some of our early findings. For more details about our data set and some of our preliminary findings see [Barbara Chamberlin's MS thesis](https://scholarsarchive.byu.edu/etd/9474/).*
 
-# Temporal Patterns
+# Temporal patterns
 
 While studying cascading failures, one interesting dimension we've explored briefly is the *temporal relationship* between the two failures. Put another way, this is about how the first failure unfolds over time and then (as a consequence) how the second (cascading) failure unfolds along with it. 
 
