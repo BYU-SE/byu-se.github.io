@@ -5,10 +5,26 @@ title: "Leaning from failure: some initial insights from a new research project"
 
 # Leaning from failure: some initial insights from a new project
 
-We are analyzing the lessons that engineers (and others) learn from failure. Our data source is publicly published incident reports, which tend to include lessons learned and/or actions planned to prevent similar incidents in the future. So far we hae reviewed 10 incident reports, extracting a list of lessons learned and planned actions. For each action in our data we are capturing a summary of the *event* that motivated the action, the planned *action*, the system that is the *target* of the action, and the *goal* or intention of the action. And for each fo those four dimensions our extracted data includes both a summary and a category. [A nice write up by the folks at Travis](https://www.traviscistatus.com/incidents/sxrh0l46czqn) listed four actions they plan to take "going forward". Here is one of those to demonstrate what our extracted data looks like:
+We are analyzing the lessons that engineers (and others) learn from failure. Our data source is publicly published incident reports, which tend to include lessons learned and/or actions planned to prevent similar incidents in the future. Broadly, we are interested in:
+
+1. What is learned from incidents (*lessons learned*)
+2. What changes are planned and why (*preventative actions*)
+
+It is still early in the project, but we've decided to share some of our initial insights. We'd love your feedback.
+
+## Situating our work
+
+The work is really about system evolution and in particular evolution driven by production failures and the analysis of those failures. So rather than being driven by changing business requirements, or ... the impetus comes from having experienced a failure in that system, gaining insight into the scenarios that may occur in production and they way the system (mis)behaves in those scenarios. It is also worth mentioning that we are considering the evolution of the system in the broadest sense: the people, the infrastructure, the deployment pipelines, etc.
+
+We suppose that the goal of these evolutionary efforts is less about the functionality and more about the reliability, resilience, etc of the system.
+
+(TODO: use related work to explain the space of software evolution and situate our work in that space.)
+
+## Data extraction
+
+So far we have reviewed 10 incident reports, extracting a list of lessons learned and planned actions. For each action in our data we are capturing a summary of the *event* that motivated the action, the planned *action*, the system that is the *target* of the action, and the *goal* or intention of the action. And for each fo those four dimensions our extracted data includes both a summary and a category. [A nice write up by the folks at Travis CI](https://www.traviscistatus.com/incidents/sxrh0l46czqn) listed four actions they plan to take "going forward". Here is how we have "extracted" one of those, just to give you a rough idea of what we are doing with this data:
 
 <table>
-  
   <tr>
     <td>Event</td>
     <td>Defect was not caught in testing (unaccounted for variety)</td>
@@ -32,18 +48,17 @@ We are analyzing the lessons that engineers (and others) learn from failure. Our
   </tr>
 </table>
 
-We have also conducted several interviews. In analyzing the data we are basically taking a software evolution approach and are intersted in 
-
-1. What is learned from incidents (*lessons learned*)
-2. What changes are planned and why (*preventative actions*)
-
-It is still early in our the project, but we've decided to share some of our initial insights. We'd love your feedback.
+We have also conducted several interviews. 
 
 ## Initial insights
+
+*(Note: Many of the patterns seem to be about multiple ways to deal with the "same" issue but from different perspectives and in different places in the system. And interesting question is why pursue all of them? Is it for defense in depth or something else?)*
 
 ### Pattern: Fix, monitor and isolate
 
 [A database cluster failed to elect a new primary in a very particular (and perhaps rare) scenario at Stripe](https://stripe.com/rcas/2019-07-10) and the incident report described plans to work "with the database maintainers to develop a fix for this underlying fault", add monitoring to notify responders if node failures occur (which in this case triggered the defect), and changes to "prevent failures of individual shards from cascading across large fractions of API traffic". Why all three? Why not just fix the defect? Seemingly because other scenarios may lead to election failure (so they plan to monitor for various node failures), and of course there are many reasons a database shard might similarly fail (so they plan to improve the behavior of the system in such cases, also). 
+
+*(Question: on the isolate topic, is there something interesting here about dependencies and learning about (non-functional) relationships between systems?)*
 
 ### Pattern: Fast then better
 
@@ -52,6 +67,21 @@ An [AWS incident report](https://aws.amazon.com/message/11201/) (which documente
 For what we suppose are similar reasons, [at Cloudflare a failure](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/) in which a regular expression with excessive backtracking caused a global outage (beginning with their fire wall), they proposed to immediately "re-introduce the excessive CPU usage protection that got removed", about one week later to "introduce performance profiling for all rules to the test suite", about two weeks later to switch to a regex engine with "run-time guarantees", and "in the longer term" replace their fire wall engine completely (adding "yet another layer of protection"). In this case it seems each "better" solution was also another layer of protection. 
 
 *(Question: in what sense is each one better and is better the right term?)*
+
+### Pattern: Multi-stage defense
+
+In some cases planned actions address the same issue at different development stages. Again from the Cloudflare incident report, the authors proposed ensuring that no expensive regex caused a similar interruption by: 
+
+* Performing code inspections,
+* Adding performance profiling to tests,
+* Adding staging to their deployments, and
+* Adding protection in production. 
+
+### Pattern: Defense along the cascading path
+
+[A recent incident at Slack](https://slack.engineering/slacks-incident-on-2-22-22/) was caused by "complex interactions between our application, the Vitess datastores, caching system, and our service discovery system." A maintenance action cascaded between these systems in an unexpected way. In response, they are proposing actions or describing lessons learned from each of the major steps along the path of the cascading failure path: (1) the maintenance action, (2) the role of the control plane, (3) database schema and query performance, (3) caching hosts. I think a key insight here is that the incident "highlighted some other risks" including other scenarios that might trigger similar failures.
+
+*(Note: the list above is just a placeholder and could be expanded here, but also needs some attention in 43.yaml.)*
 
 ### Concept: "Similar" failures or "repeat" incidents
 
@@ -74,4 +104,4 @@ One of our interviewees expressed scepticism that incidents ever repeat(and warn
 
 * What is the difference when a learning is articulated as a lesson learned (LL) vs a preventative action (PA)? LLs are lower stakes and do not represent the same kind of a commitment for team. They may also be repeated and eventually lead to some action.
 
-* Many incident reports propose adding something to system, but fewer propose removing. How often is the risk of changes, and added complexity considered?
+* We have yet to see a report that lists no learnings and not actions. But why couldn't the conclusion be "given our perception of the risks, the impacts, the cost involved in changing we decided not to change anything"? After all there are risks associated with making changes, some of the gains may be marginal, and the risk of a repeat incident may be low.
