@@ -23,23 +23,23 @@ So far we have reviewed 10 incident reports, extracting the lessons learned and 
 
 <table>
   <tr>
-    <td>*Event*</td>
+    <td><b>Event</b></td>
     <td>Defect was not caught in testing (unaccounted for variety)</td>
     <td>Defect deployed</td>
   </tr>
   
   <tr>
-    <td>*Action*</td>
+    <td><b>Action</b></td>
     <td>Validate more failure scenarios (increase diversity of tests) </td>
     <td>Add tests</td>
   </tr>  
   <tr>
-    <td>*Target*</td>
+    <td><b>Target</b></td>
     <td>Test suite in staging environment</td>
     <td>Test suite</td>
   </tr>  
   <tr>
-    <td>*Goal*</td>
+    <td><b>Goal</b></td>
     <td>Catch "these kinds of regressions" pre-production</td>
     <td>Catch regression</td>
   </tr>
